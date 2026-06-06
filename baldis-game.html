@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Baldi's AI Basics - Ultimate Edition</title>
+  <title>Baldi's AI Basics</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:#000; overflow:hidden; font-family:'Courier New',monospace; touch-action:manipulation; }
@@ -21,13 +21,12 @@
       display:flex; flex-direction:column; align-items:center; justify-content:center;
       background:rgba(0,0,0,0.95); z-index:200; pointer-events:auto; gap:15px;
     }
-    #deviceSelect h2 { color:#f1c40f; font-size:36px; margin-bottom:10px; }
+    #deviceSelect h2 { color:#f1c40f; font-size:36px; }
     #deviceSelect button {
       font-size:22px; padding:15px 40px; background:#c0392b; border:3px solid #e74c3c;
       color:white; cursor:pointer; border-radius:10px; font-family:'Courier New',monospace; width:280px;
     }
     #deviceSelect button:hover { background:#e74c3c; }
-    #deviceSelect .gamepad-btn { background:#2e7d32; border-color:#4caf50; }
 
     #menu {
       position:absolute; top:0; left:0; width:100%; height:100%;
@@ -101,7 +100,6 @@
     @keyframes nullGlitch { 0% { transform: translate(0, 0); } 25% { transform: translate(-12px, 6px); } 50% { transform: translate(12px, -6px); } 75% { transform: translate(-6px, -12px); } 100% { transform: translate(0, 0); } }
     .null-screen { background: #000 !important; animation: nullGlitch 0.3s infinite; }
 
-    /* МОБИЛЬНЫЕ КОНТРОЛЫ */
     #mobileControls { position:absolute; bottom:10px; left:10px; right:10px; display:none; z-index:40; }
     #joystickBase { position:absolute; left:15px; bottom:20px; width:110px; height:110px; background:rgba(255,255,255,0.12); border-radius:50%; border:2px solid rgba(255,255,255,0.35); }
     #joystickStick { position:absolute; top:35px; left:35px; width:40px; height:40px; background:rgba(255,255,255,0.45); border-radius:50%; }
@@ -114,18 +112,15 @@
     #btnHide { left:140px; bottom:70px; width:45px; height:45px; font-size:14px; }
     #btnDrop { right:10px; bottom:130px; width:40px; height:40px; font-size:14px; }
     #btnPause { right:10px; top:10px; width:40px; height:40px; font-size:16px; }
-    
-    #gamepadStatus { position:absolute; top:50px; right:10px; color:#0f0; font-size:12px; z-index:45; display:none; }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
   <div id="ui">
     <div id="deviceSelect">
-      <h2>🎮 ВЫБЕРИТЕ УПРАВЛЕНИЕ</h2>
+      <h2>📱 ВЫБЕРИТЕ УПРАВЛЕНИЕ</h2>
       <button onclick="selectDevice('pc')">🖥 ПК (клавиатура + мышь)</button>
       <button onclick="selectDevice('touch')">📱 Сенсорное управление</button>
-      <button class="gamepad-btn" onclick="selectDevice('gamepad')">🎮 Геймпад (Xbox/PS/Switch)</button>
     </div>
 
     <div id="menu">
@@ -139,17 +134,16 @@
       <input type="text" id="seedInput" placeholder="Сид (пусто = случайный)">
       <input type="text" id="cheatInput" placeholder="Чит-коды: secret / good / godmode">
       <div style="color:#f1c40f;">🏆 Рекорд: <span id="best">0</span></div>
-      <div style="color:#aaa; font-size:12px; margin-top:5px;">Геймпад: A-взять X-предмет B-бег Y-тревога LB-укрытие RB-выброс Start-пауза</div>
-      <div style="color:#aaa; font-size:14px; margin-top:10px;">© alexsem2112 | Made with DeepSeek</div>
+      <div style="color:#aaa; font-size:14px; margin-top:10px;">© devnull | Made with DeepSeek</div>
     </div>
 
     <div class="cross"></div>
     <canvas class="minimap" id="minimap" width="100" height="100"></canvas>
-    <div class="controls-hint" id="controlsHint">ESC-пауза | WASD | E-взять | F-предмет | G-выбросить | Q-тревога | H-укрытие</div>
+    <div class="controls-hint" id="controlsHint">ESC-пауза | WASD | E-взять | F-предмет | G-выбросить</div>
 
     <div class="hud">
       <div>📓 <span id="nbCount">0/7</span> | 🚨 <span id="alarmCount">1</span> | 🔢 <span id="calcCount">1</span> | 🎫 <span id="whistleCount">1</span></div>
-      <div>💰 <span id="coinCount">0</span> | ⏱️ <span id="timerDisplay">0</span>с</div>
+      <div>💰 <span id="coinCount">0</span> | ⏱️ <span id="timerDisplay">0</span>с | 🏢 <span id="floorDisplay" style="display:none;">Этаж 1</span></div>
       <div class="bar"><div class="fill" id="stamFill"></div></div>
       <div id="warn" style="color:#e74c3c; font-size:14px; display:none;">⚠ Балди!</div>
       <div id="principalWarn" style="color:#ff9800; font-size:12px; display:none;">👔 Директор!</div>
@@ -163,9 +157,9 @@
     </div>
 
     <div id="lockedIndicator">🔒 ЗАПЕРТ! 🔒</div>
-    <div id="alarmIndicator">🚨 ТРЕВОГА! БАЛДИ ОТВЛЕЧЁН!</div>
-    <div id="ghostIndicator">👻 ПРИЗРАК ПЕРЕМЕШАЛ ПРЕДМЕТЫ!</div>
-    <div id="hidingIndicator">🗄️ ВЫ В УКРЫТИИ</div>
+    <div id="alarmIndicator">🚨 ТРЕВОГА!</div>
+    <div id="ghostIndicator">👻 ПРИЗРАК!</div>
+    <div id="hidingIndicator">🗄️ УКРЫТИЕ</div>
 
     <div id="pauseMenu">
       <h2>⏸ ПАУЗА</h2>
@@ -193,8 +187,6 @@
       <div>Дай ему предмет, чтобы пройти!</div>
       <div id="bullyItems"></div>
     </div>
-
-    <div id="gamepadStatus">🎮 Геймпад подключён</div>
 
     <div id="mobileControls">
       <div id="joystickBase"><div id="joystickStick"></div></div>
@@ -229,8 +221,6 @@
   <script>
     // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
     let controlMode = 'pc';
-    let gamepadConnected = false;
-    let gamepadIndex = -1;
     let isMobile = false;
     let gameMode = 'normal';
     let alarmActive = false, alarmTimer = 0, alarmUses = 1;
@@ -241,10 +231,6 @@
     let calcUses = 1, whistleUses = 1;
     let hidingActive = false;
     let birthdayMode = false;
-    
-    // Предыдущие состояния кнопок геймпада (для предотвращения повторов)
-    let prevGamepadButtons = {};
-    let prevGamepadAxes = {};
 
     function selectDevice(device) {
       controlMode = device;
@@ -256,231 +242,10 @@
         document.getElementById('mobileControls').style.display = 'block';
         document.getElementById('controlsHint').textContent = '🎮 Джойстик | Кнопки | Свайп-камера';
         setupTouchControls();
-      } else if (device === 'gamepad') {
-        document.getElementById('mobileControls').style.display = 'none';
-        document.getElementById('controlsHint').textContent = '🎮 Геймпад | Подключите контроллер и нажмите кнопку';
-        document.getElementById('gamepadStatus').style.display = 'block';
-        document.getElementById('gamepadStatus').textContent = '🔍 Ожидание геймпада...';
-        setupGamepad();
       } else {
         document.getElementById('mobileControls').style.display = 'none';
-        document.getElementById('gamepadStatus').style.display = 'none';
         document.getElementById('controlsHint').textContent = 'ESC-пауза | WASD | E-взять | F-предмет | G-выбросить | Q-тревога | H-укрытие';
       }
-    }
-
-    // ==================== ПОДДЕРЖКА ГЕЙМПАДОВ (ИСПРАВЛЕНО) ====================
-    function setupGamepad() {
-      window.addEventListener('gamepadconnected', (e) => {
-        gamepadConnected = true;
-        gamepadIndex = e.gamepad.index;
-        document.getElementById('gamepadStatus').textContent = '✅ ' + e.gamepad.id.substring(0, 25) + '...';
-        document.getElementById('gamepadStatus').style.color = '#0f0';
-        console.log('✅ Геймпад подключён:', e.gamepad.id, 'Индекс:', e.gamepad.index);
-      });
-
-      window.addEventListener('gamepaddisconnected', (e) => {
-        gamepadConnected = false;
-        gamepadIndex = -1;
-        document.getElementById('gamepadStatus').textContent = '❌ Геймпад отключён';
-        document.getElementById('gamepadStatus').style.color = '#f00';
-        console.log('❌ Геймпад отключён');
-      });
-    }
-
-    function pollGamepad() {
-      if (!gamepadConnected || gamepadIndex < 0 || !started || paused) return;
-      
-      const gamepads = navigator.getGamepads();
-      const gp = gamepads[gamepadIndex];
-      if (!gp) {
-        // Геймпад потерян, пробуем найти заново
-        for (let i = 0; i < gamepads.length; i++) {
-          if (gamepads[i]) {
-            gamepadIndex = i;
-            return;
-          }
-        }
-        return;
-      }
-
-      // Левый стик - движение
-      const lx = gp.axes[0] || 0;
-      const ly = gp.axes[1] || 0;
-      
-      keys['forward'] = ly < -0.3;
-      keys['backward'] = ly > 0.3;
-      keys['left'] = lx < -0.3;
-      keys['right'] = lx > 0.3;
-
-      // Правый стик - поворот камеры
-      const rx = gp.axes[2] || 0;
-      if (Math.abs(rx) > 0.1 && player.alive && !player.won && !player.locked && !player.hiding) {
-        player.angle += rx * 0.04;
-      }
-
-      // D-pad (ось 9 - горизонталь, ось 8 - вертикаль на некоторых контроллерах)
-      const dpadX = gp.axes[9] || 0;
-      const dpadY = gp.axes[8] || 0;
-      if (Math.abs(dpadX) > 0.5) {
-        keys['left'] = dpadX < -0.5;
-        keys['right'] = dpadX > 0.5;
-      }
-      if (Math.abs(dpadY) > 0.5) {
-        keys['forward'] = dpadY < -0.5;
-        keys['backward'] = dpadY > 0.5;
-      }
-
-      // Кнопки (проверяем нажатие только при изменении состояния)
-      const buttons = gp.buttons;
-      
-      // A (кнопка 0) - взаимодействие
-      if (buttons[0] && buttons[0].pressed && !prevGamepadButtons[0]) {
-        interact();
-      }
-      // B (кнопка 1) - бег (удержание)
-      keys['sprint'] = buttons[1]?.pressed || false;
-      // X (кнопка 2) - использовать предмет
-      if (buttons[2] && buttons[2].pressed && !prevGamepadButtons[2]) {
-        useItem();
-      }
-      // Y (кнопка 3) - тревога
-      if (buttons[3] && buttons[3].pressed && !prevGamepadButtons[3]) {
-        activateAlarm();
-      }
-      // LB (кнопка 4) - укрытие
-      if (buttons[4] && buttons[4].pressed && !prevGamepadButtons[4]) {
-        toggleHiding();
-      }
-      // RB (кнопка 5) - выбросить предмет
-      if (buttons[5] && buttons[5].pressed && !prevGamepadButtons[5]) {
-        dropItem();
-      }
-      // LT (кнопка 6) - предыдущий слот
-      if (buttons[6] && buttons[6].pressed && !prevGamepadButtons[6]) {
-        player.sel = (player.sel + 2) % 3;
-      }
-      // RT (кнопка 7) - следующий слот
-      if (buttons[7] && buttons[7].pressed && !prevGamepadButtons[7]) {
-        player.sel = (player.sel + 1) % 3;
-      }
-      // Start (кнопка 9) - пауза
-      if (buttons[9] && buttons[9].pressed && !prevGamepadButtons[9]) {
-        document.getElementById('pauseMenu').style.display = 'flex';
-        paused = true;
-        if (controlMode === 'pc' && document.pointerLockElement) document.exitPointerLock();
-      }
-      // Select/Back (кнопка 8) - выбросить предмет (альтернатива)
-      if (buttons[8] && buttons[8].pressed && !prevGamepadButtons[8]) {
-        dropItem();
-      }
-
-      // Сохраняем предыдущие состояния кнопок
-      for (let i = 0; i < buttons.length; i++) {
-        prevGamepadButtons[i] = buttons[i]?.pressed || false;
-      }
-      prevGamepadAxes[0] = lx;
-      prevGamepadAxes[1] = ly;
-      prevGamepadAxes[2] = rx;
-    }
-
-    // ==================== СЕНСОРНОЕ УПРАВЛЕНИЕ ====================
-    function setupTouchControls() {
-      const jb = document.getElementById('joystickBase');
-      const js = document.getElementById('joystickStick');
-      let ja = false, cx = 55, cy = 55;
-
-      jb.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        ja = true;
-        jb.setPointerCapture(e.pointerId);
-      });
-
-      jb.addEventListener('pointermove', (e) => {
-        e.preventDefault();
-        if (!ja) return;
-        const rect = jb.getBoundingClientRect();
-        const dx = e.clientX - rect.left - cx;
-        const dy = e.clientY - rect.top - cy;
-        const dist = Math.min(35, Math.hypot(dx, dy));
-        const ang = Math.atan2(dy, dx);
-        js.style.left = (cx - 20 + Math.cos(ang) * dist) + 'px';
-        js.style.top = (cy - 20 + Math.sin(ang) * dist) + 'px';
-        const th = 8;
-        keys['forward'] = dy < -th;
-        keys['backward'] = dy > th;
-        keys['left'] = dx < -th;
-        keys['right'] = dx > th;
-      });
-
-      jb.addEventListener('pointerup', (e) => {
-        e.preventDefault();
-        ja = false;
-        js.style.left = '35px';
-        js.style.top = '35px';
-        keys['forward'] = false;
-        keys['backward'] = false;
-        keys['left'] = false;
-        keys['right'] = false;
-      });
-
-      jb.addEventListener('pointerleave', () => {
-        ja = false;
-        js.style.left = '35px';
-        js.style.top = '35px';
-        keys['forward'] = false;
-        keys['backward'] = false;
-        keys['left'] = false;
-        keys['right'] = false;
-      });
-
-      const bindBtn = (id, action) => {
-        const btn = document.getElementById(id);
-        btn.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          action();
-        });
-      };
-
-      bindBtn('btnInteract', interact);
-      bindBtn('btnUseItem', useItem);
-      bindBtn('btnDrop', dropItem);
-      bindBtn('btnAlarm', activateAlarm);
-      bindBtn('btnHide', toggleHiding);
-      
-      const sprintBtn = document.getElementById('btnSprint');
-      sprintBtn.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        keys['sprint'] = true;
-      });
-      sprintBtn.addEventListener('pointerup', (e) => {
-        e.preventDefault();
-        keys['sprint'] = false;
-      });
-      sprintBtn.addEventListener('pointerleave', () => {
-        keys['sprint'] = false;
-      });
-
-      document.getElementById('btnPause').addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        document.getElementById('pauseMenu').style.display = 'flex';
-        paused = true;
-      });
-
-      let lx = 0;
-      canvas.addEventListener('pointerdown', (e) => {
-        if (e.target === canvas) lx = e.clientX;
-      });
-      canvas.addEventListener('pointermove', (e) => {
-        if (e.target === canvas && started && !paused && player.alive && !player.won && !player.locked && !player.hiding) {
-          const dx = e.clientX - lx;
-          player.angle += dx * 0.005;
-          lx = e.clientX;
-        }
-      });
     }
 
     // ==================== ГЕНЕРАТОР КАРТЫ ====================
@@ -492,7 +257,7 @@
     let W,H; const MW=30, MH=30; let map=[], exitDoor=null, confetti=[], birthdayBalloons=[];
 
     function generateMap(seed) {
-      rng=createRNG(seed+infiniteFloor); map=Array(MH).fill().map(()=>Array(MW).fill(0));
+      rng=createRNG(seed+infiniteFloor*1000); map=Array(MH).fill().map(()=>Array(MW).fill(0));
       for(let y=0;y<MH;y++){map[y][0]=1;map[y][MW-1]=1;}
       for(let x=0;x<MW;x++){map[0][x]=1;map[MH-1][x]=1;}
       const cr=[5,10,15,20,25], sr=rng.shuffle(cr).slice(0,rng.nextInt(2,4)), pp=[];
@@ -504,6 +269,8 @@
       const rooms=[]; for(let i=0;i<18;i++){const rw=rng.nextInt(3,5),rh=rng.nextInt(3,5),rx=rng.nextInt(2,MW-rw-2),ry=rng.nextInt(2,MH-rh-2);let o=false;for(const r of rooms){if(rx<r.x+r.w&&rx+rw>r.x&&ry<r.y+r.h&&ry+rh>r.y){o=true;break;}}if(!o&&rooms.length<9){rooms.push({x:rx,y:ry,w:rw,h:rh});for(let y=ry;y<ry+rh;y++)for(let x=rx;x<rx+rw;x++)if(x===rx||x===rx+rw-1||y===ry||y===ry+rh-1)if(rng.next()>0.3)map[y][x]=1;}}
       for(let i=0;i<rng.nextInt(25,40);i++){const x=rng.nextInt(2,MW-3),y=rng.nextInt(2,MH-3);if(map[y][x]===0)map[y][x]=2;}
       for(let i=0;i<5;i++){const x=rng.nextInt(2,MW-3),y=rng.nextInt(2,MH-3);if(map[y][x]===2)map[y][x]=3;}
+      // Увеличиваем скорость Балди с каждым этажом
+      if(gameMode==='infinite') baldi.speed=Math.min(4,1.5+infiniteFloor*0.3);
       return rooms;
     }
 
@@ -559,12 +326,13 @@
     function startGame(){
       document.getElementById('menu').style.display='none';document.getElementById('death').style.display='none';document.getElementById('win').style.display='none';document.getElementById('nullEnding').style.display='none';document.getElementById('dlg').style.display='none';document.getElementById('nbUI').style.display='none';document.getElementById('pauseMenu').style.display='none';document.getElementById('lockedIndicator').style.display='none';document.getElementById('bullyPrompt').style.display='none';document.getElementById('alarmIndicator').style.display='none';document.getElementById('ghostIndicator').style.display='none';document.getElementById('hidingIndicator').style.display='none';
       const seedStr=document.getElementById('seedInput').value;const seed=seedStr?parseInt(seedStr)||hashString(seedStr):Math.floor(Math.random()*99999999);currentSeed=seed;
+      if(gameMode==='infinite'){document.getElementById('floorDisplay').style.display='inline';document.getElementById('floorDisplay').textContent='Этаж '+infiniteFloor;}
+      else{document.getElementById('floorDisplay').style.display='none';}
       rooms=generateMap(seed);spawnObjects();exitDoor={x:28,y:28,active:false};
       player.stamina=100;player.notebooks=0;player.coins=0;player.mistakes=0;player.alive=true;player.won=false;player.inv=[null,null,null];player.sel=0;player.allCorrect=true;player.godMode=false;player.noclip=false;player.locked=false;player.lockTimer=0;player.hiding=false;
-      baldi.active=false;baldi.x=20;baldi.y=20;baldi.speed=nightMode?2.5:1.5;baldi.distracted=false;baldi.distractTimer=0;
+      baldi.active=false;baldi.x=20;baldi.y=20;baldi.speed=nightMode?2.5:(gameMode==='infinite'?Math.min(4,1.5+infiniteFloor*0.3):1.5);baldi.distracted=false;baldi.distractTimer=0;
       principal.stuckTimer=0;bully.active=false;bully.blocking=false;bully.blockTimer=0;sweep.sweepTimer=0;sweep.isSweeping=false;
       alarmActive=false;alarmTimer=0;ghost.active=false;ghost.timer=0;ghost.nextAppear=30;calcUses=1;whistleUses=1;alarmUses=1;survivalTime=0;hidingActive=false;
-      prevGamepadButtons = {}; prevGamepadAxes = {};
       document.getElementById('nbCount').textContent='0/7';document.getElementById('coinCount').textContent='0';document.getElementById('stamFill').style.width='100%';document.getElementById('warn').style.display='none';document.getElementById('principalWarn').style.display='none';document.getElementById('seedDisplay').textContent='🌱 Сид: '+currentSeed;document.getElementById('alarmCount').textContent=alarmUses;document.getElementById('calcCount').textContent=calcUses;document.getElementById('whistleCount').textContent=whistleUses;
       started=true;paused=false;if(controlMode==='pc')canvas.requestPointerLock();initAudio();
     }
@@ -588,12 +356,39 @@
     function mm(e){if(started&&!paused&&player.alive&&!player.won&&!player.locked&&!player.hiding)player.angle+=e.movementX*0.003;}
     if(controlMode==='pc'){canvas.addEventListener('wheel',e=>{player.sel=(player.sel+(e.deltaY>0?1:2))%3;});}
 
+    // ==================== СЕНСОРНОЕ УПРАВЛЕНИЕ ====================
+    function setupTouchControls() {
+      const jb = document.getElementById('joystickBase');
+      const js = document.getElementById('joystickStick');
+      let ja = false, cx = 55, cy = 55;
+
+      jb.addEventListener('pointerdown', (e) => { e.preventDefault(); ja = true; jb.setPointerCapture(e.pointerId); });
+      jb.addEventListener('pointermove', (e) => { e.preventDefault(); if (!ja) return; const rect = jb.getBoundingClientRect(); const dx = e.clientX - rect.left - cx; const dy = e.clientY - rect.top - cy; const dist = Math.min(35, Math.hypot(dx, dy)); const ang = Math.atan2(dy, dx); js.style.left = (cx - 20 + Math.cos(ang) * dist) + 'px'; js.style.top = (cy - 20 + Math.sin(ang) * dist) + 'px'; const th = 8; keys['forward'] = dy < -th; keys['backward'] = dy > th; keys['left'] = dx < -th; keys['right'] = dx > th; });
+      jb.addEventListener('pointerup', (e) => { e.preventDefault(); ja = false; js.style.left = '35px'; js.style.top = '35px'; keys['forward'] = false; keys['backward'] = false; keys['left'] = false; keys['right'] = false; });
+      jb.addEventListener('pointerleave', () => { ja = false; js.style.left = '35px'; js.style.top = '35px'; keys['forward'] = false; keys['backward'] = false; keys['left'] = false; keys['right'] = false; });
+
+      const bindBtn = (id, action) => { const btn = document.getElementById(id); btn.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); action(); }); };
+      bindBtn('btnInteract', interact);
+      bindBtn('btnUseItem', useItem);
+      bindBtn('btnDrop', dropItem);
+      bindBtn('btnAlarm', activateAlarm);
+      bindBtn('btnHide', toggleHiding);
+      
+      const sprintBtn = document.getElementById('btnSprint');
+      sprintBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); keys['sprint'] = true; });
+      sprintBtn.addEventListener('pointerup', (e) => { e.preventDefault(); keys['sprint'] = false; });
+      sprintBtn.addEventListener('pointerleave', () => { keys['sprint'] = false; });
+
+      document.getElementById('btnPause').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('pauseMenu').style.display = 'flex'; paused = true; });
+
+      let lx = 0;
+      canvas.addEventListener('pointerdown', (e) => { if (e.target === canvas) lx = e.clientX; });
+      canvas.addEventListener('pointermove', (e) => { if (e.target === canvas && started && !paused && player.alive && !player.won && !player.locked && !player.hiding) { const dx = e.clientX - lx; player.angle += dx * 0.01; lx = e.clientX; } });
+    }
+
     function dropItem(){if(!started||paused||player.locked||player.hiding)return;if(player.inv[player.sel]){const item=player.inv[player.sel];items.push({x:player.x+(Math.random()-0.5)*2,y:player.y+(Math.random()-0.5)*2,type:item});player.inv[player.sel]=null;beep(300,0.15,'sine',0.04);}}
-
     function activateAlarm(){if(!started||paused||alarmUses<=0)return;alarmUses--;document.getElementById('alarmCount').textContent=alarmUses;alarmActive=true;alarmTimer=30;baldi.distracted=true;baldi.distractTimer=30;document.getElementById('alarmIndicator').style.display='block';alarmSound();setTimeout(()=>{alarmActive=false;document.getElementById('alarmIndicator').style.display='none';},30000);}
-
     function toggleHiding(){if(!started||paused)return;const nearLocker=checkNearLocker();if(!nearLocker&&!player.hiding)return;player.hiding=!player.hiding;hidingActive=player.hiding;document.getElementById('hidingIndicator').style.display=player.hiding?'block':'none';beep(400,0.3,'sine',0.06);}
-
     function checkNearLocker(){const px=player.x,py=player.y;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const mx=Math.floor(px+dx),my=Math.floor(py+dy);if(mx>=0&&mx<MW&&my>=0&&my<MH&&map[my][mx]===3)return true;}return false;}
 
     function generateProblems(){const p=[];for(let i=0;i<2;i++){const add=Math.random()>0.5;let a,b;if(add){a=Math.floor(Math.random()*15)+2;b=Math.floor(Math.random()*15)+2;}else{a=Math.floor(Math.random()*20)+10;b=Math.floor(Math.random()*(a-2))+2;}p.push({a,b,op:add?'+':'-',ans:add?a+b:a-b,corrupted:false});}p.push({corrupted:true,text:'ERROR: '+Math.floor(Math.random()*999)+' + '+Math.floor(Math.random()*999)+' = ?'});return rng.shuffle(p);}
@@ -607,7 +402,7 @@
     document.getElementById('calcBtn').onclick=()=>{if(calcUses>0){calcUses--;document.getElementById('calcCount').textContent=calcUses;submitAnswer(true);}};
     document.getElementById('answer').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('submitBtn').click();});
 
-    function submitAnswer(useCalc){if(!curNB||notebookProblems.length===0)return;const prob=notebookProblems[currentProblemIndex];if(useCalc||prob.corrupted){if(!useCalc){player.mistakes++;player.allCorrect=false;if(!baldi.active){baldi.active=true;baldi.x=20;baldi.y=20;}baldi.speed=Math.min(3,1.5+player.mistakes*0.2);baldi.interval=Math.max(400,900-player.mistakes*50);beep(160,0.5,'sawtooth',0.08);}else beep(880,0.3,'sine',0.08);}else{const v=parseInt(document.getElementById('answer').value);if(!isNaN(v)&&v===prob.ans)beep(660,0.2,'sine',0.08);else{player.mistakes++;player.allCorrect=false;beep(160,0.5,'sawtooth',0.08);}}currentProblemIndex++;if(currentProblemIndex>=3){player.notebooks++;document.getElementById('nbCount').textContent=player.notebooks+'/7';notebooks.splice(notebooks.indexOf(curNB),1);if(player.notebooks>=7){if(gameMode==='infinite'){infiniteFloor++;startGame();return;}if(player.allCorrect&&player.mistakes===0){document.getElementById('nullEnding').style.display='flex';paused=true;}else{exitDoor.active=true;document.getElementById('win').style.display='flex';paused=true;}}hideNB();}else{showCurrentProblem();}}
+    function submitAnswer(useCalc){if(!curNB||notebookProblems.length===0)return;const prob=notebookProblems[currentProblemIndex];if(useCalc||prob.corrupted){if(!useCalc){player.mistakes++;player.allCorrect=false;if(!baldi.active){baldi.active=true;baldi.x=20;baldi.y=20;}baldi.speed=Math.min(3,1.5+player.mistakes*0.2);baldi.interval=Math.max(400,900-player.mistakes*50);beep(160,0.5,'sawtooth',0.08);}else beep(880,0.3,'sine',0.08);}else{const v=parseInt(document.getElementById('answer').value);if(!isNaN(v)&&v===prob.ans)beep(660,0.2,'sine',0.08);else{player.mistakes++;player.allCorrect=false;beep(160,0.5,'sawtooth',0.08);}}currentProblemIndex++;if(currentProblemIndex>=3){player.notebooks++;document.getElementById('nbCount').textContent=player.notebooks+'/7';notebooks.splice(notebooks.indexOf(curNB),1);if(player.notebooks>=7){if(gameMode==='infinite'){infiniteFloor++;alert('🎉 Переход на этаж '+infiniteFloor+'! Балди становится быстрее!');startGame();return;}if(player.allCorrect&&player.mistakes===0){document.getElementById('nullEnding').style.display='flex';paused=true;}else{exitDoor.active=true;document.getElementById('win').style.display='flex';paused=true;}}hideNB();}else{showCurrentProblem();}}
 
     function interact(){if(!player.alive||player.won||paused||player.locked||player.hiding)return;if(bully.blocking&&Math.hypot(player.x-bully.x,player.y-bully.y)<2.5){showBullyPrompt();return;}if(exitDoor&&exitDoor.active&&Math.hypot(player.x-28.5,player.y-28.5)<2){player.won=true;document.getElementById('win').style.display='flex';paused=true;beep(880,0.8,'sine',0.1);return;}for(const nb of notebooks){if(Math.hypot(player.x-nb.x,player.y-nb.y)<1.8){showNB(nb);return;}}for(let i=items.length-1;i>=0;i--){if(Math.hypot(player.x-items[i].x,player.y-items[i].y)<1.8){const slot=player.inv.findIndex(s=>s===null);if(slot!==-1){player.inv[slot]=items[i].type;if(items[i].type==='coin'){player.coins++;document.getElementById('coinCount').textContent=player.coins;}else if(items[i].type==='whistle'){whistleUses++;document.getElementById('whistleCount').textContent=whistleUses;}else if(items[i].type==='calc'){calcUses++;document.getElementById('calcCount').textContent=calcUses;}items.splice(i,1);beep(550,0.15,'sine',0.06);}return;}}}
     
@@ -621,28 +416,40 @@
 
     function render(){
       W=canvas.width;H=canvas.height;const img=ctx.createImageData(W,H),d=img.data;
-      const dark=nightMode?0.3:1;
+      const dark=nightMode?0.15:1;
       for(let y=0;y<H;y++){const ceil=y<H/2;for(let x=0;x<W;x++){const i=(y*W+x)*4;if(birthdayMode){if(ceil){d[i]=80*dark;d[i+1]=40*dark;d[i+2]=70*dark;}else{d[i]=70*dark;d[i+1]=30*dark;d[i+2]=60*dark;}}else{if(ceil){d[i]=35*dark;d[i+1]=30*dark;d[i+2]=45*dark;}else{d[i]=75*dark;d[i+1]=75*dark;d[i+2]=75*dark;}}d[i+3]=255;}}
       const fovS=player.angle-Math.PI/6;
-      for(let col=0;col<W;col++){const ra=fovS+(col/W)*(Math.PI/3);const sin=Math.sin(ra),cos=Math.cos(ra);let dist=0,hit=0;while(!hit&&dist<25){dist+=0.05;const tx=Math.floor(player.x+cos*dist),ty=Math.floor(player.y+sin*dist);if(tx>=0&&tx<MW&&ty>=0&&ty<MH){const t=map[ty][tx];if(t!==0)hit=t;}}const cd=dist*Math.cos(ra-player.angle);const wh=Math.floor(H/(cd+0.1));const top=Math.floor((H-wh)/2),bot=Math.floor((H+wh)/2);const shade=Math.max(0.15,1-cd/20)*dark;for(let y=top;y<bot;y++){if(y<0||y>=H)continue;const i=(y*W+col)*4;let r,g,b;if(birthdayMode){if(hit===1){r=255;g=150;b=180;}else if(hit===2){r=200;g=100;b=180;}else if(hit===3){r=100;g=200;b=100;}else{r=80;g=40;b=70;}}else{if(hit===1){r=200;g=180;b=140;}else if(hit===2){r=60;g=110;b=170;}else if(hit===3){r=34;g=139;b=34;}else{r=50;g=50;b=50;}}d[i]=Math.floor(r*shade);d[i+1]=Math.floor(g*shade);d[i+2]=Math.floor(b*shade);d[i+3]=255;}}
+      const flashlightRange=8;
+      for(let col=0;col<W;col++){const ra=fovS+(col/W)*(Math.PI/3);const sin=Math.sin(ra),cos=Math.cos(ra);let dist=0,hit=0;while(!hit&&dist<25){dist+=0.05;const tx=Math.floor(player.x+cos*dist),ty=Math.floor(player.y+sin*dist);if(tx>=0&&tx<MW&&ty>=0&&ty<MH){const t=map[ty][tx];if(t!==0)hit=t;}}const cd=dist*Math.cos(ra-player.angle);const wh=Math.floor(H/(cd+0.1));const top=Math.floor((H-wh)/2),bot=Math.floor((H+wh)/2);const shade=Math.max(0.05,1-cd/flashlightRange)*dark;for(let y=top;y<bot;y++){if(y<0||y>=H)continue;const i=(y*W+col)*4;let r,g,b;if(birthdayMode){if(hit===1){r=255;g=150;b=180;}else if(hit===2){r=200;g=100;b=180;}else if(hit===3){r=100;g=200;b=100;}else{r=80;g=40;b=70;}}else{if(hit===1){r=200;g=180;b=140;}else if(hit===2){r=60;g=110;b=170;}else if(hit===3){r=34;g=139;b=34;}else{r=50;g=50;b=50;}}d[i]=Math.floor(r*shade);d[i+1]=Math.floor(g*shade);d[i+2]=Math.floor(b*shade);d[i+3]=255;}}
       ctx.putImageData(img,0,0);
       const sp=[];notebooks.forEach(n=>sp.push({x:n.x,y:n.y,sz:0.7,clr:'#f1c40f',ic:'📓'}));if(exitDoor&&exitDoor.active)sp.push({x:28.5,y:28.5,sz:0.8,clr:'#00ff00',ic:'🚪'});if(baldi.active&&!baldi.distracted)sp.push({x:baldi.x,y:baldi.y,sz:0.8,clr:'#e74c3c',ic:birthdayMode?'🎂':'👨‍🏫'});sp.push({x:principal.x,y:principal.y,sz:0.7,clr:'#ff9800',ic:'👔'});if(sweep.active)sp.push({x:sweep.x,y:sweep.y,sz:0.65,clr:'#00bcd4',ic:'🧹'});if(bully.blocking)sp.push({x:bully.x,y:bully.y,sz:0.75,clr:'#ff5722',ic:'😈'});if(ghost.active)sp.push({x:player.x+(Math.random()-0.5)*5,y:player.y+(Math.random()-0.5)*5,sz:0.6,clr:'#c0c0c0',ic:'👻'});if(birthdayMode){birthdayBalloons.forEach(b=>{sp.push({x:b.x,y:b.y+Math.sin(Date.now()/1000+b.bobOffset)*0.3,sz:b.size,clr:b.color,ic:'🎈'});});}items.forEach(it=>sp.push({x:it.x,y:it.y,sz:0.45,clr:itemInfo[it.type]?.color||'#fff',ic:itemInfo[it.type]?.icon||'?'}));sp.sort((a,b)=>Math.hypot(player.x-b.x,player.y-b.y)-Math.hypot(player.x-a.x,player.y-a.y));
-      for(const s of sp){const dx=s.x-player.x,dy=s.y-player.y;const dist=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx)-player.angle;while(ang>Math.PI)ang-=Math.PI*2;while(ang<-Math.PI)ang+=Math.PI*2;if(Math.abs(ang)>Math.PI/2.5||dist<0.3)continue;const sx=W/2+(ang/(Math.PI/3))*W/2;const sz=Math.floor(H/(dist+0.2)*s.sz);const sy=H/2-sz/2;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(sx-sz/2+3,sy+3,sz,sz);ctx.fillStyle=s.clr;ctx.fillRect(sx-sz/2,sy,sz,sz);ctx.fillStyle='#fff';ctx.font=(sz*0.5)+'px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(s.ic,sx,sy+sz/2);}
+      for(const s of sp){const dx=s.x-player.x,dy=s.y-player.y;const dist=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx)-player.angle;while(ang>Math.PI)ang-=Math.PI*2;while(ang<-Math.PI)ang+=Math.PI*2;if(Math.abs(ang)>Math.PI/2.5||dist<0.3)continue;if(nightMode&&dist>flashlightRange)continue;const sx=W/2+(ang/(Math.PI/3))*W/2;const sz=Math.floor(H/(dist+0.2)*s.sz);const sy=H/2-sz/2;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(sx-sz/2+3,sy+3,sz,sz);ctx.fillStyle=s.clr;ctx.fillRect(sx-sz/2,sy,sz,sz);ctx.fillStyle='#fff';ctx.font=(sz*0.5)+'px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(s.ic,sx,sy+sz/2);}
       if(birthdayMode){confetti.forEach(c=>{c.y+=c.speed*0.5;c.x+=c.drift*0.3;if(c.y>100){c.y=-5;c.x=Math.random()*100;}const px=c.x/100*W;const py=c.y/100*H;ctx.fillStyle=c.color;ctx.fillRect(px,py,c.size,c.size*0.6);});}
-      if(player.locked)ctx.fillRect(0,0,W,H);
-      if(nightMode)ctx.fillRect(0,0,W,H);
+      if(nightMode){const gradient=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.min(W,H)*0.7);gradient.addColorStop(0,'rgba(0,0,0,0)');gradient.addColorStop(0.3,'rgba(0,0,0,0.3)');gradient.addColorStop(0.6,'rgba(0,0,0,0.7)');gradient.addColorStop(1,'rgba(0,0,0,0.95)');ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);}
+      if(player.locked){ctx.fillStyle='rgba(180,0,0,0.4)';ctx.fillRect(0,0,W,H);}
       drawMinimap();
     }
 
     let lastTime=0;
     function update(dt){
       if(!started||paused||!player.alive||player.won)return;
-      
-      // Опрос геймпада каждый кадр
-      if (controlMode === 'gamepad') pollGamepad();
-      
       if(gameMode==='survival'){survivalTime+=dt;document.getElementById('timerDisplay').textContent=Math.floor(survivalTime);}
-      if(player.locked){player.lockTimer-=dt;document.getElementById('lockedIndicator').style.display='block';document.getElementById('lockedIndicator').textContent='🔒 ЗАПЕРТ! '+Math.ceil(player.lockTimer)+'с';if(player.lockTimer<=0){player.locked=false;document.getElementById('lockedIndicator').style.display='none';document.getElementById('principalWarn').style.display='none';}return;}
+      // Балди может поймать даже когда игрок заперт
+      if(baldi.active&&!player.godMode&&!baldi.distracted){
+        const dx=player.x-baldi.x,dy=player.y-baldi.y;const dist=Math.hypot(dx,dy);
+        if(dist<0.7){player.alive=false;document.getElementById('death').style.display='flex';document.getElementById('dm').textContent=player.mistakes;document.getElementById('dn').textContent=player.notebooks;document.getElementById('survivalScore').textContent=Math.floor(survivalTime);paused=true;slap();return;}
+        if(dist>0.5&&!player.hiding)moveAI(baldi,player.x,player.y,baldi.speed,dt,false);
+        if(performance.now()-baldi.lastStep>baldi.interval){baldi.lastStep=performance.now();slap();}
+        document.getElementById('warn').style.display=dist<6?'block':'none';
+      }
+      if(player.locked){
+        player.lockTimer-=dt;
+        document.getElementById('lockedIndicator').style.display='block';
+        document.getElementById('lockedIndicator').textContent='🔒 ЗАПЕРТ! '+Math.ceil(player.lockTimer)+'с';
+        if(player.lockTimer<=0){player.locked=false;document.getElementById('lockedIndicator').style.display='none';document.getElementById('principalWarn').style.display='none';}
+        // Игрок не может двигаться, но Балди продолжает преследовать
+        return;
+      }
       if(player.hiding){document.getElementById('hidingIndicator').style.display='block';return;}
       if(alarmActive){alarmTimer-=dt;if(alarmTimer<=0){alarmActive=false;document.getElementById('alarmIndicator').style.display='none';}}
       if(baldi.distracted){baldi.distractTimer-=dt;if(baldi.distractTimer<=0)baldi.distracted=false;}
@@ -654,16 +461,11 @@
       if(player.sprinting){const pDist=Math.hypot(player.x-principal.x,player.y-principal.y);if(pDist<principal.detectionRange){player.locked=true;player.lockTimer=principal.lockDuration;document.getElementById('principalWarn').style.display='block';beep(300,0.3,'square',0.1);}}
       sweep.sweepTimer-=dt;if(sweep.sweepTimer<=0&&!sweep.isSweeping){sweep.isSweeping=true;sweep.sweepTimer=sweep.sweepDuration;if(sweep.room){sweep.x=sweep.room.x+sweep.room.w/2;sweep.y=sweep.room.y+sweep.room.h/2;}}else if(sweep.isSweeping&&sweep.sweepTimer<=0){sweep.isSweeping=false;sweep.sweepTimer=sweep.sweepInterval;}
       if(bully.blockTimer>0){bully.blockTimer-=dt;if(bully.blockTimer<=0)bully.blocking=false;}else if(!bully.blocking&&rng.next()<0.0005){const spots=findFreeSpots();if(spots.length>0){const spot=spots[rng.nextInt(0,spots.length-1)];bully.x=spot.x;bully.y=spot.y;bully.blocking=true;bully.active=true;}}
-      if(baldi.active&&!player.godMode&&!baldi.distracted){const dx=player.x-baldi.x,dy=player.y-baldi.y;const dist=Math.hypot(dx,dy);if(dist<0.7){player.alive=false;document.getElementById('death').style.display='flex';document.getElementById('dm').textContent=player.mistakes;document.getElementById('dn').textContent=player.notebooks;document.getElementById('survivalScore').textContent=Math.floor(survivalTime);paused=true;slap();return;}if(dist>0.5)moveAI(baldi,player.x,player.y,baldi.speed,dt,false);if(performance.now()-baldi.lastStep>baldi.interval){baldi.lastStep=performance.now();slap();}document.getElementById('warn').style.display=dist<6?'block':'none';}
       document.getElementById('stamFill').style.width=player.stamina+'%';for(let i=0;i<3;i++){const s=document.getElementById('s'+i);s.textContent=player.inv[i]?itemInfo[player.inv[i]]?.icon||'?':'-';s.className='slot'+(i===player.sel?' sel':'');}
     }
 
     function loop(ts){requestAnimationFrame(loop);canvas.width=window.innerWidth;canvas.height=window.innerHeight;if(lastTime&&started)update(Math.min(0.1,(ts-lastTime)/1000));lastTime=ts;if(started)render();else{ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);}}
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;requestAnimationFrame(loop);
-    console.log('✅ Baldi\'s AI Basics - Ultimate Edition!');
-    console.log('🎮 Геймпад: A-взаимод. X-предмет B-бег Y-тревога LB-укрытие RB-выброс Start-пауза');
-    console.log('📱 Сенсорное управление работает!');
-    console.log('© alexsem2112 | Made with DeepSeek');
   </script>
 </body>
 </html>
